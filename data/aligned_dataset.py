@@ -18,6 +18,12 @@ class AlignedDataset(BaseDataset):
             dir_B = '_B' if self.opt.label_nc == 0 else '_img'
             self.dir_B = os.path.join(opt.dataroot, opt.phase + dir_B)  
             self.B_paths = sorted(make_dataset(self.dir_B))
+            
+        ### input C (extra conditions)
+        if opt.isTrain and self.opt.input_nc == 6:
+            dir_C = '_C' if self.opt.label_nc == 0 else '_cond'
+            self.dir_C = os.path.join(opt.dataroot, opt.phase + dir_C)  
+            self.C_paths = sorted(make_dataset(self.dir_C))
 
         ### instance maps
         if not opt.no_instance:
@@ -39,8 +45,7 @@ class AlignedDataset(BaseDataset):
         params = get_params(self.opt, A.size)
         if self.opt.label_nc == 0:
             transform_A = get_transform(self.opt, params)
-            #A_tensor = transform_A(A.convert('RGB'))
-            #A_tensor = transform_A(A)
+            A_tensor = transform_A(A.convert('RGB'))
         else:
             transform_A = get_transform(self.opt, params, method=Image.NEAREST, normalize=False)
             A_tensor = transform_A(A) * 255.0
@@ -49,10 +54,19 @@ class AlignedDataset(BaseDataset):
         ### input B (real images)
         if self.opt.isTrain or self.opt.use_encoded_image:
             B_path = self.B_paths[index]   
-            #B = Image.open(B_path).convert('RGB')
-            B = Image.open(B_path)
+            B = Image.open(B_path).convert('RGB')
             transform_B = get_transform(self.opt, params)      
             B_tensor = transform_B(B)
+            
+        C_tensor = 0
+        ### input C (extra conditions)
+        if self.opt.isTrain or self.opt.input_nc == 6:
+            C_path = self.C_paths[index]   
+            C = Image.open(C_path).convert('RGB')
+            transform_C = get_transform(self.opt, params)      
+            C_tensor = transform_C(C)
+            
+            # Concatenate A with C
 
         ### if using instance maps        
         if not self.opt.no_instance:
@@ -67,7 +81,7 @@ class AlignedDataset(BaseDataset):
                 feat_tensor = norm(transform_A(feat))                            
 
         input_dict = {'label': A_tensor, 'inst': inst_tensor, 'image': B_tensor, 
-                      'feat': feat_tensor, 'path': A_path}
+                      'feat': feat_tensor, 'path': A_path, 'condition': C_tensor}
 
         return input_dict
 
