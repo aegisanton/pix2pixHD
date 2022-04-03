@@ -20,7 +20,7 @@ class AlignedDataset(BaseDataset):
             self.B_paths = sorted(make_dataset(self.dir_B))
             
         ### input C (extra conditions)
-        if opt.isTrain and self.opt.input_nc == 6:
+        if self.opt.input_nc == 6:
             dir_C = '_C' if self.opt.label_nc == 0 else '_cond'
             self.dir_C = os.path.join(opt.dataroot, opt.phase + dir_C)  
             self.C_paths = sorted(make_dataset(self.dir_C))
@@ -60,7 +60,7 @@ class AlignedDataset(BaseDataset):
             
         C_tensor = 0
         ### input C (extra conditions)
-        if self.opt.isTrain or self.opt.input_nc == 6:
+        if self.opt.input_nc == 6:
             C_path = self.C_paths[index]   
             C = Image.open(C_path).convert('RGB')
             transform_C = get_transform(self.opt, params)      
