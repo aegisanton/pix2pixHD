@@ -69,7 +69,7 @@ class AlignedDataset(BaseDataset):
             
             # Concatenate A with C
             A_tensor = cat((A_tensor, C_tensor), dim=1)
-            #print(A_tensor)
+            print(A_tensor.shape)
 
         ### if using instance maps        
         if not self.opt.no_instance:
