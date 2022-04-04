@@ -67,7 +67,9 @@ for epoch in range(start_epoch, opt.niter + opt.niter_decay + 1):
         save_fake = total_steps % opt.display_freq == display_delta
 
         ############## Forward Pass ######################
-        losses, generated = model(Variable(data['label']), Variable(data['inst']), 
+        input = Variable(data['stacked']) if (opt.input_nc == 6) else Variable(data['label'])
+            
+        losses, generated = model(input, Variable(data['inst']), 
             Variable(data['image']), Variable(data['feat']), infer=save_fake)
 
         # sum per device losses
