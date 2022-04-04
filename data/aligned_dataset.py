@@ -68,7 +68,7 @@ class AlignedDataset(BaseDataset):
             C_tensor = transform_C(C)
             
             # Concatenate A with C
-            A_tensor = cat(A_tensor, C_tensor, dim=1)
+            A_tensor = cat((A_tensor, C_tensor), dim=1)
             #print(A_tensor)
 
         ### if using instance maps        
