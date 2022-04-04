@@ -1,4 +1,5 @@
 import os.path
+from torch import cat
 from data.base_dataset import BaseDataset, get_params, get_transform, normalize
 from data.image_folder import make_dataset
 from PIL import Image
@@ -67,6 +68,8 @@ class AlignedDataset(BaseDataset):
             C_tensor = transform_C(C)
             
             # Concatenate A with C
+            A_tensor = cat(A_tensor, C_tensor, dim=0)
+            #print(A_tensor)
 
         ### if using instance maps        
         if not self.opt.no_instance:
