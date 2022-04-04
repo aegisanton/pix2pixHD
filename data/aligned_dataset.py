@@ -60,6 +60,7 @@ class AlignedDataset(BaseDataset):
             B_tensor = transform_B(B)
             
         C_tensor = 0
+        AC_tensor = 0
         ### input C (extra conditions)
         if self.opt.input_nc == 6:
             C_path = self.C_paths[index]   
@@ -68,7 +69,7 @@ class AlignedDataset(BaseDataset):
             C_tensor = transform_C(C)
             
             # Concatenate A with C along the channel dimension
-            A_tensor = cat((A_tensor, C_tensor), dim=0)
+            AC_tensor = cat((A_tensor, C_tensor), dim=0)
 
         ### if using instance maps        
         if not self.opt.no_instance:
@@ -83,7 +84,7 @@ class AlignedDataset(BaseDataset):
                 feat_tensor = norm(transform_A(feat))                            
 
         input_dict = {'label': A_tensor, 'inst': inst_tensor, 'image': B_tensor, 
-                      'feat': feat_tensor, 'path': A_path, 'condition': C_tensor}
+                      'feat': feat_tensor, 'path': A_path, 'condition': C_tensor, 'stacked': AC_tensor}
 
         return input_dict
 
