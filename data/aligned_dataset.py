@@ -67,9 +67,8 @@ class AlignedDataset(BaseDataset):
             transform_C = get_transform(self.opt, params)      
             C_tensor = transform_C(C)
             
-            # Concatenate A with C
-            A_tensor = cat((A_tensor, C_tensor), dim=1)
-            print(A_tensor.shape)
+            # Concatenate A with C along the channel dimension
+            A_tensor = cat((A_tensor, C_tensor), dim=0)
 
         ### if using instance maps        
         if not self.opt.no_instance:
