@@ -41,9 +41,13 @@ for i, data in enumerate(dataset):
     if opt.data_type == 16:
         data['label'] = data['label'].half()
         data['inst']  = data['inst'].half()
+        if opt.input_nc == 6:
+            data['stacked'] = data['stacked'].half()
     elif opt.data_type == 8:
         data['label'] = data['label'].uint8()
         data['inst']  = data['inst'].uint8()
+        if opt.input_nc == 6:
+            data['stacked'] = data['stacked'].uint8()
     if opt.export_onnx:
         print ("Exporting to ONNX: ", opt.export_onnx)
         assert opt.export_onnx.endswith("onnx"), "Export model file should end with .onnx"
