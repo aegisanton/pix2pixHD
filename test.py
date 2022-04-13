@@ -55,11 +55,17 @@ for i, data in enumerate(dataset):
         generated = run_trt_engine(opt.engine, minibatch, [data['label'], data['inst']])
     elif opt.onnx:
         generated = run_onnx(opt.onnx, opt.data_type, minibatch, [data['label'], data['inst']])
-    else:        
-        generated = model.inference(data['label'], data['inst'], data['image'])
+    else:
+        if opt.input_nc == 6:
+            generated = model.inference(data['stacked'], data['inst'], data['image'])
+        else:
+            generated = model.inference(data['label'], data['inst'], data['image'])
         
     visuals = OrderedDict([('input_label', util.tensor2label(data['label'][0], opt.label_nc)),
                            ('synthesized_image', util.tensor2im(generated.data[0]))])
+    if opt.input_nc == 6:
+        visuals['input_condition', util.tensor1label(data['condition'][0], opt.label_nc)]
+    
     img_path = data['path']
     print('process image... %s' % img_path)
     visualizer.save_images(webpage, visuals, img_path)
